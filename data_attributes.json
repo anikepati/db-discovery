@@ -1,0 +1,49 @@
+{
+  "attributes": [
+    {
+      "name": "customer email",
+      "value": "charlie@example.com",
+      "context": "Email address of a new customer signing up"
+    },
+    {
+      "name": "customer first name",
+      "value": "Charlie",
+      "context": "First name of the new customer"
+    },
+    {
+      "name": "customer last name",
+      "value": "Brown",
+      "context": "Last name of the new customer"
+    },
+    {
+      "name": "customer phone number",
+      "value": "555-0199",
+      "context": "Contact phone number for the customer"
+    },
+    {
+      "name": "product sku code",
+      "value": "WM-001",
+      "context": "SKU identifier for the product being ordered"
+    },
+    {
+      "name": "order quantity",
+      "value": 3,
+      "context": "Number of units of the product being ordered"
+    },
+    {
+      "name": "order status",
+      "value": "processing",
+      "context": "Updated status for the existing order belonging to alice@example.com"
+    },
+    {
+      "name": "product stock level",
+      "value": 147,
+      "context": "Updated inventory count for product SKU WM-001 after order fulfillment"
+    },
+    {
+      "name": "loyalty points",
+      "value": 250,
+      "context": "Loyalty reward points earned by the customer"
+    }
+  ]
+}

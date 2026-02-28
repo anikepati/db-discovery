@@ -1,4 +1,4 @@
-Great idea — instead of subprocess/SSE complexity, just **dynamically generate the MCP server as an in-memory Python module** per request. Clean and simple.
+Great idea — just **dynamically generate the MCP server as an in-memory Python module** per request. Clean and simple.
 
 ## Architecture
 

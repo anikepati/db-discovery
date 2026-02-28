@@ -1,0 +1,150 @@
+functions:
+
+  # ── API Tools ──────────────────────────────────────────────────────────────
+  - id: get_invoices
+    description: "Fetch invoices optionally filtered by status"
+    type: http_api
+    inputs:
+      status:
+        type: string
+        required: false
+        default: "unpaid"
+        description: "Invoice status: paid, unpaid, overdue"
+      limit:
+        type: integer
+        required: false
+        default: 50
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/posts"
+      params:
+        _limit: "{{ inputs.limit }}"
+      headers:
+        Authorization: "Bearer {{ secrets.FINANCE_API_TOKEN }}"
+
+  - id: get_payments
+    description: "Fetch recent payments from the finance API"
+    type: http_api
+    inputs:
+      limit:
+        type: integer
+        required: false
+        default: 20
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/comments"
+      params:
+        _limit: "{{ inputs.limit }}"
+      headers:
+        Authorization: "Bearer {{ secrets.FINANCE_API_TOKEN }}"
+
+  # ── DB Tools ───────────────────────────────────────────────────────────────
+  - id: get_overdue_invoices
+    description: "Get overdue invoices from the finance database"
+    type: sql
+    inputs:
+      days_overdue:
+        type: integer
+        required: false
+        default: 30
+        description: "Minimum days overdue to include"
+    config:
+      connection: "{{ secrets.DB_CONN }}"
+      query: >
+        SELECT id, customer_id, amount, due_date, status
+        FROM invoices
+        WHERE status = 'overdue'
+        AND due_date <= date('now', '-' || :days || ' days')
+        ORDER BY amount DESC
+      params:
+        days: "{{ inputs.days_overdue }}"
+
+  - id: get_revenue_by_month
+    description: "Get total revenue grouped by month for a given year"
+    type: sql
+    inputs:
+      year:
+        type: integer
+        required: true
+        description: "The year to report on e.g. 2024"
+    config:
+      connection: "{{ secrets.DB_CONN }}"
+      query: >
+        SELECT
+          strftime('%m', paid_at) as month,
+          SUM(amount) as total_revenue,
+          COUNT(*) as invoice_count
+        FROM invoices
+        WHERE status = 'paid'
+        AND strftime('%Y', paid_at) = :year
+        GROUP BY month
+        ORDER BY month
+      params:
+        year: "{{ inputs.year }}"
+
+  # ── Python Tools ───────────────────────────────────────────────────────────
+  - id: calculate_financial_summary
+    description: "Calculate key financial metrics from a list of invoice amounts"
+    type: python
+    inputs:
+      amounts:
+        type: array
+        required: true
+        description: "List of numeric invoice amounts"
+      currency:
+        type: string
+        required: false
+        default: "USD"
+    python:
+      code: |
+        import statistics
+
+        amounts = [float(a) for a in inputs["amounts"]]
+        currency = inputs.get("currency", "USD")
+
+        result = {
+            "currency": currency,
+            "total": round(sum(amounts), 2),
+            "count": len(amounts),
+            "average": round(statistics.mean(amounts), 2),
+            "median": round(statistics.median(amounts), 2),
+            "largest": round(max(amounts), 2),
+            "smallest": round(min(amounts), 2),
+        }
+
+  - id: flag_anomalies
+    description: "Flag invoices that are statistical outliers by amount"
+    type: python
+    inputs:
+      invoices:
+        type: array
+        required: true
+        description: "List of invoice dicts with an 'amount' field"
+      z_threshold:
+        type: number
+        required: false
+        default: 2.0
+    python:
+      code: |
+        import statistics
+
+        invoices = inputs["invoices"]
+        threshold = float(inputs.get("z_threshold", 2.0))
+        amounts = [float(i["amount"]) for i in invoices]
+
+        if len(amounts) < 2:
+            result = {"flagged": [], "reason": "Not enough data"}
+        else:
+            mean = statistics.mean(amounts)
+            stdev = statistics.stdev(amounts)
+            flagged = [
+                {**inv, "z_score": round((float(inv["amount"]) - mean) / stdev, 2)}
+                for inv in invoices
+                if abs((float(inv["amount"]) - mean) / stdev) > threshold
+            ]
+            result = {
+                "flagged": flagged,
+                "mean": round(mean, 2),
+                "stdev": round(stdev, 2),
+                "threshold": threshold,
+            }

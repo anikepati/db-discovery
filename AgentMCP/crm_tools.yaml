@@ -1,0 +1,118 @@
+functions:
+
+  # ── API Tools ──────────────────────────────────────────────────────────────
+  - id: get_customers
+    description: "Fetch all customers or filter by status from CRM API"
+    type: http_api
+    inputs:
+      status:
+        type: string
+        required: false
+        default: "active"
+        description: "Customer status: active, inactive, lead"
+      limit:
+        type: integer
+        required: false
+        default: 50
+        description: "Max records to return"
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/users"
+      params:
+        _limit: "{{ inputs.limit }}"
+      headers:
+        Authorization: "Bearer {{ secrets.CRM_API_TOKEN }}"
+
+  - id: get_customer_by_id
+    description: "Fetch a single customer record by ID"
+    type: http_api
+    inputs:
+      customer_id:
+        type: string
+        required: true
+        description: "The customer ID"
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/users/{{ inputs.customer_id }}"
+      headers:
+        Authorization: "Bearer {{ secrets.CRM_API_TOKEN }}"
+
+  - id: get_open_tickets
+    description: "Fetch open support tickets from CRM"
+    type: http_api
+    inputs:
+      limit:
+        type: integer
+        required: false
+        default: 20
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/todos"
+      params:
+        completed: "false"
+        _limit: "{{ inputs.limit }}"
+      headers:
+        Authorization: "Bearer {{ secrets.CRM_API_TOKEN }}"
+
+  # ── DB Tools ───────────────────────────────────────────────────────────────
+  - id: get_customer_notes
+    description: "Query internal customer notes from DB by customer ID"
+    type: sql
+    inputs:
+      customer_id:
+        type: string
+        required: true
+        description: "Customer ID to look up notes for"
+    config:
+      connection: "{{ secrets.DB_CONN }}"
+      query: >
+        SELECT id, customer_id, note, created_at
+        FROM customer_notes
+        WHERE customer_id = :customer_id
+        ORDER BY created_at DESC
+      params:
+        customer_id: "{{ inputs.customer_id }}"
+
+  - id: get_crm_summary
+    description: "Get a summary count of customers by status from DB"
+    type: sql
+    inputs: {}
+    config:
+      connection: "{{ secrets.DB_CONN }}"
+      query: >
+        SELECT status, COUNT(*) as count
+        FROM customers
+        GROUP BY status
+      params: {}
+
+  # ── Python Tools ───────────────────────────────────────────────────────────
+  - id: score_customers
+    description: "Score and rank customers by engagement metrics"
+    type: python
+    inputs:
+      customers:
+        type: array
+        required: true
+        description: "List of customer dicts with orders and last_login fields"
+      top_n:
+        type: integer
+        required: false
+        default: 10
+    python:
+      code: |
+        import statistics
+
+        customers = inputs["customers"]
+        top_n = inputs.get("top_n", 10)
+
+        def score(c):
+            orders = c.get("orders", 0)
+            days_since_login = c.get("days_since_login", 365)
+            return (orders * 10) - (days_since_login * 0.5)
+
+        scored = [
+            {**c, "score": round(score(c), 2)}
+            for c in customers
+        ]
+        scored.sort(key=lambda x: x["score"], reverse=True)
+        result = scored[:top_n]

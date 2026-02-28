@@ -1,0 +1,147 @@
+functions:
+
+  # ── API Tools ──────────────────────────────────────────────────────────────
+  - id: get_employees
+    description: "Fetch employees optionally filtered by department"
+    type: http_api
+    inputs:
+      department:
+        type: string
+        required: false
+        default: ""
+        description: "Department name to filter by e.g. Engineering, HR"
+      limit:
+        type: integer
+        required: false
+        default: 50
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/users"
+      params:
+        _limit: "{{ inputs.limit }}"
+      headers:
+        Authorization: "Bearer {{ secrets.HR_API_TOKEN }}"
+
+  - id: get_job_postings
+    description: "Fetch open job postings from HR system"
+    type: http_api
+    inputs:
+      limit:
+        type: integer
+        required: false
+        default: 20
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/albums"
+      params:
+        _limit: "{{ inputs.limit }}"
+      headers:
+        Authorization: "Bearer {{ secrets.HR_API_TOKEN }}"
+
+  # ── DB Tools ───────────────────────────────────────────────────────────────
+  - id: get_employees_by_department
+    description: "Query employees from DB filtered by department"
+    type: sql
+    inputs:
+      department:
+        type: string
+        required: true
+        description: "Department name"
+      status:
+        type: string
+        required: false
+        default: "active"
+    config:
+      connection: "{{ secrets.DB_CONN }}"
+      query: >
+        SELECT id, name, email, department, hire_date, salary
+        FROM employees
+        WHERE department = :department
+        AND status = :status
+        ORDER BY hire_date DESC
+      params:
+        department: "{{ inputs.department }}"
+        status: "{{ inputs.status }}"
+
+  - id: get_payroll_summary
+    description: "Get total payroll cost grouped by department"
+    type: sql
+    inputs: {}
+    config:
+      connection: "{{ secrets.DB_CONN }}"
+      query: >
+        SELECT
+          department,
+          COUNT(*) as headcount,
+          SUM(salary) as total_payroll,
+          AVG(salary) as avg_salary
+        FROM employees
+        WHERE status = 'active'
+        GROUP BY department
+        ORDER BY total_payroll DESC
+      params: {}
+
+  # ── Python Tools ───────────────────────────────────────────────────────────
+  - id: calculate_attrition_rate
+    description: "Calculate employee attrition rate from headcount data"
+    type: python
+    inputs:
+      total_employees:
+        type: integer
+        required: true
+      employees_left:
+        type: integer
+        required: true
+      period:
+        type: string
+        required: false
+        default: "annual"
+    python:
+      code: |
+        total = inputs["total_employees"]
+        left = inputs["employees_left"]
+        period = inputs.get("period", "annual")
+
+        rate = round((left / total) * 100, 2) if total > 0 else 0
+        result = {
+            "total_employees": total,
+            "employees_left": left,
+            "attrition_rate_pct": rate,
+            "period": period,
+            "risk_level": (
+                "High" if rate > 20
+                else "Medium" if rate > 10
+                else "Low"
+            )
+        }
+
+  - id: rank_departments_by_salary
+    description: "Rank departments by average salary from employee list"
+    type: python
+    inputs:
+      employees:
+        type: array
+        required: true
+        description: "List of employee dicts with department and salary fields"
+    python:
+      code: |
+        from collections import defaultdict
+        import statistics
+
+        employees = inputs["employees"]
+        dept_salaries = defaultdict(list)
+
+        for emp in employees:
+            dept = emp.get("department", "Unknown")
+            salary = float(emp.get("salary", 0))
+            dept_salaries[dept].append(salary)
+
+        result = sorted([
+            {
+                "department": dept,
+                "headcount": len(salaries),
+                "avg_salary": round(statistics.mean(salaries), 2),
+                "total_payroll": round(sum(salaries), 2),
+            }
+            for dept, salaries in dept_salaries.items()
+        ], key=lambda x: x["avg_salary"], reverse=True)

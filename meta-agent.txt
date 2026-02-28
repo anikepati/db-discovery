@@ -1,0 +1,97 @@
+As a Principal AI Engineer, I’ve detailed the full technical specifications for each phase of your Roadmap. This document serves as the **Master Engineering Spec** to guide Devin, Gemini, or Grok through the build process.
+
+---
+
+## Phase 1: Ingestion & Analysis (Weeks 1-2)
+
+**Goal:** Translate raw pixels and prose into a structured **Action Intent Manifest**.
+
+### Task 1.1: PlannerAgent Implementation
+
+* **Tech Stack:** `google-generativeai` (Gemini 1.5/2.0 Pro), Python.
+* **Spec:** Build a class `SOPPlanner` that accepts `video_path` and `doc_path`.
+* **Prompting Strategy:** Use "Multimodal Reasoning." Gemini must identify the timestamp, the action type (click/type), and the *purpose* (intent).
+* **Output:** A strict JSON schema (Pydantic) containing `ordered_steps[]`.
+
+### Task 1.2: Frame-Extraction & UI Mapping
+
+* **Tech Stack:** `OpenCV`, `Pillow`.
+* **Spec:** Extract frames at **1 FPS** or upon detected "Scene Changes" (UI shifts).
+* **Logic:** For each action in Task 1.1, the utility must crop a $224 \times 224$ "context patch" around the predicted click area to help the LLM identify the specific button/label.
+
+### Task 1.3: Selector Verifier (Grounding)
+
+* **Tech Stack:** `Playwright` (Headless).
+* **Spec:** A loop that takes the `surface_selectors` from Task 1.1, launches the target URL, and attempts `page.locator(selector).is_visible()`.
+* **Feedback Loop:** If visibility fails, it returns the current DOM snippet to the PlannerAgent for a "Selector Re-calculation."
+
+---
+
+## Phase 2: Generation Engine (Weeks 3-4)
+
+**Goal:** Convert the verified manifest into executable artifacts.
+
+### Task 2.1: SurfaceGenerator (Code-Gen)
+
+* **Tech Stack:** `Jinja2` (Templating), Playwright (Python).
+* **Spec:** * **Web:** Generate a standalone `workflow.py` using `asyncio` and Playwright.
+* **Thick Client:** If `is_thick_client=True`, generate steps using `PyAutoGUI` with image-recognition fallbacks (`pyautogui.locateOnScreen()`).
+
+
+
+### Task 2.2: SystemGenerator (API Inference)
+
+* **Tech Stack:** Gemini 1.5 Pro (Reasoning).
+* **Spec:** Analyze the SOP text for keywords like "Login," "Save," or "GET." If a Swagger/OpenAPI spec is provided, map the UI step to the closest API endpoint.
+* **Output:** A `system_tools.py` file containing functions decorated with `@adk_tool`.
+
+### Task 3: ADKAssembler
+
+* **Tech Stack:** `PyYAML`.
+* **Spec:** Automatically generate the `root_agent.yaml`.
+* **Structure:**
+```yaml
+name: {workflow_name}
+model: gemini-2.0-flash
+instruction: "Follow the SOP. Try SystemTool first, then SurfaceTool."
+tools:
+  - name: generated_tools.system_tool
+  - name: generated_tools.surface_tool
+
+```
+
+
+
+---
+
+## Phase 3: Orchestration & UI (Weeks 5-6)
+
+**Goal:** Final assembly and deployment-ready interface.
+
+### Task 3.1: Hybrid Logic Tool (Circuit Breaker)
+
+* **Spec:** A wrapper class `HybridOrchestrator`.
+* **Algorithm:** 1.  Call `system_tool()`.
+2.  If `Exception` or `Status != 200`:
+3.  Log "Backend failed, falling back to UI."
+4.  Call `surface_tool()`.
+
+### Task 3.2: CLI Factory
+
+* **Tech Stack:** `Click` or `Argparse`.
+* **Commands:**
+* `build --mode [surface|system|hybrid]`: Triggers the pipeline.
+* `verify`: Runs the Task 1.3 grounding check.
+* `deploy`: Pushes to Google Cloud Vertex AI Agent Engine.
+
+
+
+### Task 3.3: Integration Testing (The Sandbox)
+
+* **Spec:** A "Shadow Test" suite. Run the agent against a cloned environment where the API is intentionally disabled to ensure the **Hybrid fallback** triggers and the UI-based Playwright script completes the task.
+
+---
+
+[How to create multi-agent systems with Google ADK](https://www.youtube.com/watch?v=X2jTp6qvbzM)
+
+This video is essential because it demonstrates the exact hierarchical structure and YAML syntax required to coordinate multiple specialized agents within the Google Agent Development Kit framework.

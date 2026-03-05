@@ -198,3 +198,80 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 fastapi>=0.104.0
 uvicorn>=0.24.0
 playwright>=1.40.0
+-----------
+# Use the official Python image (Debian Bookworm)
+FROM python:3.11-bookworm
+
+WORKDIR /app
+
+# Install Python packages
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install OS-level dependencies for Chromium using Playwright's native tool
+RUN playwright install-deps chromium
+
+# OpenShift Compatibility: Set Playwright path and give group-root permissions
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/pw-browsers
+RUN mkdir -p /app/pw-browsers && \
+    playwright install chromium && \
+    chmod -R 775 /app/pw-browsers && \
+    chgrp -R 0 /app/pw-browsers
+
+COPY . .
+
+# Create and switch to a non-root user for OpenShift security compliance
+RUN useradd -u 1001 -g 0 -m openshiftuser
+USER 1001
+
+EXPOSE 8080
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+------------------------
+# Use the Red Hat UBI 9 Python image (highly trusted in enterprise environments)
+FROM registry.access.redhat.com/ubi9/python-311
+
+# Switch to root to install system-level packages
+USER root
+
+# Install missing C++ and rendering libraries required by headless Chromium on RHEL
+RUN dnf install -y \
+    alsa-lib \
+    atk \
+    cups-libs \
+    gtk3 \
+    libXcomposite \
+    libXcursor \
+    libXdamage \
+    libXext \
+    libXi \
+    libXrandr \
+    libXScrnSaver \
+    libXtst \
+    pango \
+    nss \
+    libdrm \
+    mesa-libgbm \
+    && dnf clean all
+
+WORKDIR /app
+
+# Install Python packages (FastAPI, Uvicorn, Playwright)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# OpenShift Compatibility: Set Playwright path and give group-root permissions
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/pw-browsers
+RUN mkdir -p /app/pw-browsers && \
+    playwright install chromium && \
+    chmod -R 775 /app/pw-browsers && \
+    chgrp -R 0 /app/pw-browsers
+
+COPY . .
+
+# Switch back to the default non-root user (1001) provided by the UBI image
+USER 1001
+
+EXPOSE 8080
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -193,3 +193,8 @@ USER 1001
 EXPOSE 8080
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+
+
+fastapi>=0.104.0
+uvicorn>=0.24.0
+playwright>=1.40.0

@@ -16,6 +16,8 @@ import os
 from google.adk.agents import Agent, SequentialAgent
 from google.adk.tools import FunctionTool
 
+from typing import Optional
+
 from .graph_rag import SchemaGraphRAG
 
 # ---------------------------------------------------------------------------
@@ -25,8 +27,16 @@ MODEL_ID = "gemini-2.0-flash"
 DB_PATH = os.environ.get("DB_PATH", "sample.db")
 INPUT_JSON = os.environ.get("INPUT_JSON", "data_attributes.json")
 
-# Build GraphRAG on import
-_rag = SchemaGraphRAG(DB_PATH).build()
+# Lazy-initialized GraphRAG singleton (avoid heavy work on module import)
+_rag: Optional[SchemaGraphRAG] = None
+
+
+def _get_rag() -> SchemaGraphRAG:
+    """Get or initialize the shared GraphRAG instance."""
+    global _rag
+    if _rag is None:
+        _rag = SchemaGraphRAG(DB_PATH).build()
+    return _rag
 
 
 # ===========================================================================
@@ -54,7 +64,7 @@ def get_graph_stats() -> dict:
     Returns:
         dict with graph size, node type counts, edge type counts.
     """
-    return {"status": "success", "stats": _rag.get_graph_stats()}
+    return {"status": "success", "stats": _get_rag().get_graph_stats()}
 
 
 def get_schema_overview() -> dict:
@@ -67,8 +77,8 @@ def get_schema_overview() -> dict:
     """
     return {
         "status": "success",
-        "schema": _rag.get_schema_summary(),
-        "readable": _rag.get_schema_context_text(),
+        "schema": _get_rag().get_schema_summary(),
+        "readable": _get_rag().get_schema_context_text(),
     }
 
 
@@ -81,7 +91,7 @@ def get_table_details(table_name: str) -> dict:
     Returns:
         dict with columns, types, PKs, FKs, concepts, samples.
     """
-    summary = _rag.get_schema_summary()
+    summary = _get_rag().get_schema_summary()
     if table_name in summary:
         return {"status": "success", "table": table_name, "details": summary[table_name]}
     return {"status": "error", "message": f"Table '{table_name}' not found",
@@ -107,8 +117,8 @@ def search_columns(attribute_name: str, attribute_value: str = "", attribute_con
     Returns:
         dict with ranked matches and per-signal scores.
     """
-    results = _rag.retrieve(attribute_name, value=attribute_value,
-                            context=attribute_context, top_k=8)
+    results = _get_rag().retrieve(attribute_name, value=attribute_value,
+                                  context=attribute_context, top_k=8)
     return {
         "status": "success",
         "query": {"name": attribute_name, "value": str(attribute_value), "context": attribute_context},
@@ -127,7 +137,7 @@ def check_record_exists(table_name: str, column_name: str, value: str) -> dict:
     Returns:
         dict with exists flag and current records if found.
     """
-    return _rag.check_exists(table_name, column_name, value)
+    return _get_rag().check_exists(table_name, column_name, value)
 
 
 def find_fk_path(from_table: str, to_table: str) -> dict:
@@ -142,7 +152,7 @@ def find_fk_path(from_table: str, to_table: str) -> dict:
     Returns:
         dict with the FK path steps or error if no path exists.
     """
-    path = _rag.find_fk_path(from_table, to_table)
+    path = _get_rag().find_fk_path(from_table, to_table)
     if path is not None:
         return {"status": "success", "path": path}
     return {"status": "error", "message": f"No FK path from '{from_table}' to '{to_table}'"}

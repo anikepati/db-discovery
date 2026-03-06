@@ -866,19 +866,48 @@ class SchemaGraphRAG:
         """Retrieve matching columns via graph traversal + embeddings."""
         return self.retriever.retrieve(attribute_name, value, context, top_k)
 
+    def _is_valid_identifier(self, table: str, column: Optional[str] = None) -> bool:
+        """Validate table/column names against extracted schema metadata."""
+        if not self._schema:
+            return False
+        table_info = self._schema.get("tables", {}).get(table)
+        if not table_info:
+            return False
+        if column is None:
+            return True
+        return column in table_info.get("columns", {})
+
     def check_exists(self, table: str, column: str, value: str) -> dict:
         """Check if a value exists in the live DB."""
         try:
-            conn = sqlite3.connect(self.db_path)
-            cur = conn.cursor()
-            cur.execute(f"PRAGMA table_info('{table}');")
-            col_names = [c[1] for c in cur.fetchall()]
-            cur.execute(f'SELECT * FROM "{table}" WHERE "{column}" = ?;', (value,))
-            rows = cur.fetchall()
-            conn.close()
+            if not self._is_valid_identifier(table, column):
+                return {
+                    "exists": False,
+                    "error": f"Invalid table/column: {table}.{column}",
+                    "available_tables": sorted(self._schema.get("tables", {}).keys()) if self._schema else [],
+                }
+
+            if self.db_type != "sqlite":
+                return {
+                    "exists": False,
+                    "error": (
+                        "check_exists is currently implemented for sqlite connections only; "
+                        f"got db_type='{self.db_type}'"
+                    ),
+                }
+
+            col_names = list(self._schema["tables"][table]["columns"].keys())
+            with sqlite3.connect(self.db_path) as conn:
+                cur = conn.cursor()
+                cur.execute(f'SELECT * FROM "{table}" WHERE "{column}" = ?;', (value,))
+                rows = cur.fetchall()
+
             if rows:
-                return {"exists": True, "count": len(rows),
-                        "records": [dict(zip(col_names, r)) for r in rows]}
+                return {
+                    "exists": True,
+                    "count": len(rows),
+                    "records": [dict(zip(col_names, r)) for r in rows],
+                }
             return {"exists": False, "count": 0, "records": []}
         except Exception as e:
             return {"exists": False, "error": str(e)}
@@ -979,7 +1008,21 @@ class SchemaGraphRAG:
         if not self.cache_dir:
             return None
         os.makedirs(self.cache_dir, exist_ok=True)
-        db_hash = hashlib.md5(os.path.abspath(self.db_path).encode()).hexdigest()[:8]
+        db_locator = self.db_path
+        source_sig = "locator_only"
+
+        # For file-backed sqlite databases, include file metadata to invalidate on change.
+        # For non-file/non-sqlite locators (e.g. DSNs), keep the key db-agnostic by hashing
+        # the locator string + db type without assuming local filesystem semantics.
+        if self.db_type == "sqlite":
+            db_abs = os.path.abspath(self.db_path)
+            db_locator = db_abs
+            if os.path.exists(db_abs):
+                db_stat = os.stat(db_abs)
+                source_sig = f"{int(db_stat.st_mtime_ns)}:{db_stat.st_size}"
+
+        key_material = f"{db_locator}|{self.db_type}|{source_sig}"
+        db_hash = hashlib.md5(key_material.encode()).hexdigest()[:12]
         return os.path.join(self.cache_dir, f"schema_graph_{db_hash}.pkl")
 
     def _save_cache(self, path: str):

@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-01T00:00:00.000Z" agent="Claude" version="21.0.0">
+  <diagram name="AgentExecutor System Architecture" id="system-arch">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="AgentExecutor — Enterprise System Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1A3A5C;" vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="1200" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ===== INTEGRATION SURFACES LAYER ===== -->
+        <mxCell id="layer1-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EBF3FB;strokeColor=#1A3A5C;strokeWidth=2;verticalAlign=top;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="1480" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="layer1-title" value="Integration Surfaces" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#1A3A5C;" vertex="1" parent="1">
+          <mxGeometry x="95" y="85" width="200" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sdk-box" value="&lt;b&gt;Python SDK&lt;/b&gt;&lt;br/&gt;embed in FastAPI,&lt;br/&gt;Django, Celery" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="130" y="115" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="rest-box" value="&lt;b&gt;FastAPI Server&lt;/b&gt;&lt;br/&gt;REST + SSE&lt;br/&gt;microservice" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="370" y="115" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cli-box" value="&lt;b&gt;CLI Launcher&lt;/b&gt;&lt;br/&gt;dev / test&lt;br/&gt;CI/CD pipelines" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="610" y="115" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="docker-box" value="&lt;b&gt;Docker / K8s&lt;/b&gt;&lt;br/&gt;container image&lt;br/&gt;ECS, GKE, AKS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="115" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="queue-box" value="&lt;b&gt;Queue Adapter&lt;/b&gt;&lt;br/&gt;SQS, PubSub&lt;br/&gt;async processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="115" width="170" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow down from surfaces to core -->
+        <mxCell id="arr1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#1A3A5C;strokeWidth=2;" edge="1" parent="1" source="layer1-bg" target="core-bg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== AGENT EXECUTOR CORE ===== -->
+        <mxCell id="core-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F7EE;strokeColor=#2E7D32;strokeWidth=2;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="260" width="1480" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="core-title" value="AgentExecutor Core" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="95" y="265" width="200" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="config-loader" value="&lt;b&gt;Config Loader&lt;/b&gt;&lt;br/&gt;YAML parsing&lt;br/&gt;env var interpolation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="120" y="295" width="155" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="graph-builder" value="&lt;b&gt;Agent Graph Builder&lt;/b&gt;&lt;br/&gt;topology resolution&lt;br/&gt;sub-agent wiring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="295" width="155" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="plugin-reg" value="&lt;b&gt;Plugin Registry&lt;/b&gt;&lt;br/&gt;tool / IO / middleware&lt;br/&gt;resolution" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="295" width="155" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="exec-engine" value="&lt;b&gt;Execution Engine&lt;/b&gt;&lt;br/&gt;request lifecycle&lt;br/&gt;orchestration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="690" y="295" width="155" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="session-mgr" value="&lt;b&gt;Session Manager&lt;/b&gt;&lt;br/&gt;stateless / persistent&lt;br/&gt;config-driven" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="295" width="155" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="toolset-res" value="&lt;b&gt;ToolSet Resolver&lt;/b&gt;&lt;br/&gt;dynamic tool loading&lt;br/&gt;MCP wiring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="295" width="155" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow from core to plugin layer -->
+        <mxCell id="arr2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#2E7D32;strokeWidth=2;" edge="1" parent="1" source="core-bg" target="plugin-bg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== PLUGIN LAYER ===== -->
+        <mxCell id="plugin-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57F17;strokeWidth=2;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="1480" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="plugin-title" value="Plugin Layer  (Priority 1 → 4)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#F57F17;" vertex="1" parent="1">
+          <mxGeometry x="95" y="425" width="260" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1-tools" value="&lt;b&gt;① ToolPlugin&lt;/b&gt;&lt;br/&gt;Custom tool sets&lt;br/&gt;MCP server configs&lt;br/&gt;Dynamic in-memory MCP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F57F17;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="115" y="455" width="175" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-io" value="&lt;b&gt;② IOPlugin&lt;/b&gt;&lt;br/&gt;Input: REST, Queue, SDK&lt;br/&gt;Output: SSE, Webhook&lt;br/&gt;REST sync, SDK object" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F57F17;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="340" y="455" width="185" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-mid" value="&lt;b&gt;③ MiddlewarePlugin&lt;/b&gt;&lt;br/&gt;before_run / after_run&lt;br/&gt;JWT auth, rate limit&lt;br/&gt;audit logging, tracing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F57F17;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="455" width="185" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="p4-session" value="&lt;b&gt;④ SessionPlugin&lt;/b&gt;&lt;br/&gt;InMemoryStore (default)&lt;br/&gt;RedisStore&lt;br/&gt;FirestoreStore" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F57F17;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="820" y="455" width="185" height="75" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow from plugin layer to execution flow -->
+        <mxCell id="arr3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#F57F17;strokeWidth=2;" edge="1" parent="1" source="plugin-bg" target="exec-flow-bg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== EXECUTION FLOW ===== -->
+        <mxCell id="exec-flow-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="610" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="exec-flow-title" value="Request Execution Lifecycle" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#7B1FA2;" vertex="1" parent="1">
+          <mxGeometry x="95" y="615" width="260" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ef1" value="&lt;b&gt;InputAdapter&lt;/b&gt;&lt;br/&gt;parse &amp; normalize" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="110" y="645" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ef2" value="&lt;b&gt;Middleware&lt;/b&gt;&lt;br/&gt;before_run()&lt;br/&gt;auth, enrich" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="290" y="645" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ef3" value="&lt;b&gt;SessionManager&lt;/b&gt;&lt;br/&gt;get_or_create()&lt;br/&gt;fresh / restored" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="470" y="645" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ef4" value="&lt;b&gt;ToolSet Resolver&lt;/b&gt;&lt;br/&gt;load tools&lt;br/&gt;wire MCP servers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="650" y="645" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5" value="&lt;b&gt;ADK Runner&lt;/b&gt;&lt;br/&gt;run_async()&lt;br/&gt;isolated per req" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="830" y="645" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ef6" value="&lt;b&gt;Middleware&lt;/b&gt;&lt;br/&gt;after_run()&lt;br/&gt;audit, metrics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="645" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ef7" value="&lt;b&gt;OutputAdapter&lt;/b&gt;&lt;br/&gt;SSE / JSON&lt;br/&gt;webhook / object" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="645" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows in execution flow -->
+        <mxCell id="ef-arr1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#7B1FA2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ef1" target="ef2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef-arr2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#7B1FA2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ef2" target="ef3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef-arr3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#7B1FA2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ef3" target="ef4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef-arr4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#7B1FA2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ef4" target="ef5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef-arr5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#7B1FA2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ef5" target="ef6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef-arr6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#7B1FA2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ef6" target="ef7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow from execution to ADK layer -->
+        <mxCell id="arr4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#7B1FA2;strokeWidth=2;" edge="1" parent="1" source="ef5" target="adk-bg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== ADK LAYER ===== -->
+        <mxCell id="adk-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;strokeWidth=2;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="790" width="1480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="adk-title" value="Google Agent Development Kit (ADK) — Unchanged" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#1565C0;" vertex="1" parent="1">
+          <mxGeometry x="95" y="795" width="350" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="adk1" value="&lt;b&gt;SequentialAgent&lt;/b&gt;&lt;br/&gt;sub-agent orchestration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="115" y="825" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="adk2" value="&lt;b&gt;LlmAgent / Q-Agents&lt;/b&gt;&lt;br/&gt;configurable instances&lt;br/&gt;tool binding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="340" y="825" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="adk3" value="&lt;b&gt;ADK Session&lt;/b&gt;&lt;br/&gt;ctx.session.state&lt;br/&gt;conversation history" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="565" y="825" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="adk4" value="&lt;b&gt;MCP Tool Server&lt;/b&gt;&lt;br/&gt;per-request isolated&lt;br/&gt;RestrictedPython sandbox" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="790" y="825" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="adk5" value="&lt;b&gt;Callbacks&lt;/b&gt;&lt;br/&gt;before_agent_callback&lt;br/&gt;clear_history pattern" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1015" y="825" width="175" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="adk6" value="&lt;b&gt;Gemini Model&lt;/b&gt;&lt;br/&gt;gemini-2.0-flash&lt;br/&gt;configurable per agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="825" width="175" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===== CONFIG FILES (right side) ===== -->
+        <mxCell id="cfg-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;strokeWidth=2;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="420" width="250" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="cfg-title" value="Config Files" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="1315" y="425" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="cfg1" value="&lt;b&gt;agent_config.yaml&lt;/b&gt;&lt;br/&gt;topology, tools,&lt;br/&gt;session mode, plugins" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C62828;strokeColor=#B71C1C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1315" y="455" width="205" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="cfg2" value="&lt;b&gt;executor.yaml&lt;/b&gt;&lt;br/&gt;server, workers,&lt;br/&gt;session backends" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C62828;strokeColor=#B71C1C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1315" y="520" width="205" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow from config to core -->
+        <mxCell id="cfg-arr" value="loads" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#C62828;strokeWidth=2;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="cfg-bg" target="core-bg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- DIAGRAM 2: Request Lifecycle Detail -->
+  <diagram name="Request Lifecycle Detail" id="lifecycle">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="lc-title" value="Request Execution Lifecycle — Detailed Flow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#1A3A5C;" vertex="1" parent="1">
+          <mxGeometry x="100" y="20" width="900" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Swim lanes -->
+        <mxCell id="lane-caller" value="&lt;b&gt;Caller&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#EBF3FB;strokeColor=#1A3A5C;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1060" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-io" value="&lt;b&gt;I/O Layer&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#FFF8E1;strokeColor=#F57F17;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="170" width="1060" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-mid" value="&lt;b&gt;Middleware&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="260" width="1060" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-session" value="&lt;b&gt;Session&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#F0F7EE;strokeColor=#2E7D32;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="350" width="1060" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-tools" value="&lt;b&gt;ToolSet&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="1060" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-adk" value="&lt;b&gt;ADK Runner&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="530" width="1060" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Nodes in lanes -->
+        <!-- Caller -->
+        <mxCell id="lc-req" value="Request&lt;br/&gt;(JSON/SSE/Queue)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-caller">
+          <mxGeometry x="40" y="25" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lc-resp" value="Response&lt;br/&gt;(stream / sync)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-caller">
+          <mxGeometry x="880" y="25" width="130" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- IO -->
+        <mxCell id="lc-in-adapt" value="InputAdapter.parse()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F57F17;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-io">
+          <mxGeometry x="40" y="25" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lc-out-adapt" value="OutputAdapter.emit()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F57F17;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-io">
+          <mxGeometry x="850" y="25" width="160" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Middleware -->
+        <mxCell id="lc-mid-pre" value="before_run()&lt;br/&gt;auth / rate limit / enrich" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-mid">
+          <mxGeometry x="230" y="25" width="175" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lc-mid-post" value="after_run()&lt;br/&gt;audit / metrics / transform" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-mid">
+          <mxGeometry x="655" y="25" width="175" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Session -->
+        <mxCell id="lc-sess-get" value="get_or_create()&lt;br/&gt;stateless: fresh&lt;br/&gt;persistent: restore" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-session">
+          <mxGeometry x="430" y="15" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="lc-sess-save" value="save() if persistent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-session">
+          <mxGeometry x="620" y="25" width="140" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Tools -->
+        <mxCell id="lc-tools" value="resolve() → load ToolPlugins&lt;br/&gt;wire MCP servers (isolated)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E65100;strokeColor=#BF360C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-tools">
+          <mxGeometry x="430" y="25" width="220" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ADK -->
+        <mxCell id="lc-adk-run" value="Runner.run_async()&lt;br/&gt;SequentialAgent → Sub-agents → Tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="lane-adk">
+          <mxGeometry x="350" y="25" width="280" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Flow arrows (cross-lane) -->
+        <mxCell id="f1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-req" target="lc-in-adapt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-in-adapt" target="lc-mid-pre">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-mid-pre" target="lc-sess-get">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-sess-get" target="lc-tools">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-tools" target="lc-adk-run">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-adk-run" target="lc-sess-save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-sess-save" target="lc-mid-post">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-mid-post" target="lc-out-adapt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#555;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="lc-out-adapt" target="lc-resp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- DIAGRAM 3: Plugin Extension Model -->
+  <diagram name="Plugin Extension Model" id="plugins">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="pm-title" value="Plugin Extension Model" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#1A3A5C;" vertex="1" parent="1">
+          <mxGeometry x="100" y="20" width="900" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Registry center -->
+        <mxCell id="pm-reg" value="&lt;b&gt;PluginRegistry&lt;/b&gt;&lt;br/&gt;.register_plugin()&lt;br/&gt;.resolve(plugin_name)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1A3A5C;strokeColor=#1A3A5C;fontColor=#FFFFFF;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="430" y="320" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Tool Plugin -->
+        <mxCell id="pm-tool-base" value="&lt;b&gt;ToolPlugin (ABC)&lt;/b&gt;&lt;br/&gt;get_tools(config)&lt;br/&gt;get_mcp_servers(config)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F57F17;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="200" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-tool-edr" value="EDRToolPlugin&lt;br/&gt;actimize tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFB74D;strokeColor=#E65100;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="200" width="130" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-tool-mcp" value="MCPToolPlugin&lt;br/&gt;dynamic in-memory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFB74D;strokeColor=#E65100;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="180" y="200" width="130" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-tool-arr1" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#E65100;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-tool-edr" target="pm-tool-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-tool-arr2" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#E65100;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-tool-mcp" target="pm-tool-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-tool-reg-arr" value="registers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#F57F17;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="pm-tool-base" target="pm-reg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- IO Plugin -->
+        <mxCell id="pm-io-base" value="&lt;b&gt;IOPlugin (ABC)&lt;/b&gt;&lt;br/&gt;InputAdapter.parse()&lt;br/&gt;OutputAdapter.emit()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B1FA2;strokeColor=#4A148C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="350" y="80" width="200" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-io-sse" value="SSEAdapter&lt;br/&gt;stream events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#4A148C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="200" width="120" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-io-webhook" value="WebhookAdapter&lt;br/&gt;POST callback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BA68C8;strokeColor=#4A148C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="450" y="200" width="120" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-io-arr1" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#7B1FA2;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-io-sse" target="pm-io-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-io-arr2" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#7B1FA2;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-io-webhook" target="pm-io-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-io-reg-arr" value="registers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#7B1FA2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="pm-io-base" target="pm-reg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Middleware Plugin -->
+        <mxCell id="pm-mid-base" value="&lt;b&gt;MiddlewarePlugin (ABC)&lt;/b&gt;&lt;br/&gt;before_run(request)&lt;br/&gt;after_run(response)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C62828;strokeColor=#B71C1C;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="80" width="200" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-mid-jwt" value="JWTAuthMiddleware&lt;br/&gt;token validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF9A9A;strokeColor=#B71C1C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="200" width="130" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-mid-audit" value="AuditLogMiddleware&lt;br/&gt;compliance logging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EF9A9A;strokeColor=#B71C1C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="730" y="200" width="130" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-mid-arr1" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#C62828;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-mid-jwt" target="pm-mid-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-mid-arr2" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#C62828;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-mid-audit" target="pm-mid-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-mid-reg-arr" value="registers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#C62828;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="pm-mid-base" target="pm-reg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Session Plugin -->
+        <mxCell id="pm-sess-base" value="&lt;b&gt;SessionPlugin (ABC)&lt;/b&gt;&lt;br/&gt;get(session_id)&lt;br/&gt;save() / delete()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2E7D32;strokeColor=#1B5E20;fontColor=#FFFFFF;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="80" width="200" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-sess-mem" value="InMemoryStore&lt;br/&gt;default / dev" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#1B5E20;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="830" y="200" width="110" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-sess-redis" value="RedisStore&lt;br/&gt;distributed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#81C784;strokeColor=#1B5E20;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="960" y="200" width="110" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-sess-arr1" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2E7D32;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-sess-mem" target="pm-sess-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-sess-arr2" value="extends" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2E7D32;strokeWidth=1.5;dashed=1;endArrow=open;" edge="1" parent="1" source="pm-sess-redis" target="pm-sess-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-sess-reg-arr" value="registers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#2E7D32;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="pm-sess-base" target="pm-reg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Registry to ADK -->
+        <mxCell id="pm-adk" value="&lt;b&gt;AgentExecutor&lt;/b&gt;&lt;br/&gt;resolves plugins at runtime" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="415" y="490" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pm-reg-exec-arr" value="injects into" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#1A3A5C;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="pm-reg" target="pm-adk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
